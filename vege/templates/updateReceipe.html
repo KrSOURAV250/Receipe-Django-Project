@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block start %}
+  <div class="container mt-5">
+    <form action="{% url 'updated' callin.id %}" method="POST" class="col-6 mx-auto card p-3 shadow-lg" enctype="multipart/form-data">
+      {% csrf_token %}
+      <h2>Update Receipe</h2>
+      <hr />
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Receipe Name</label>
+        <input type="text" placeholder="{{ callin.receipe_name }}" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="receipe_name" />
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Receipe Description</label>
+        <textarea class="form-control" name="receipe_description">{{ callin.receipe_description }}</textarea>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Receipe Image</label>
+        <br>
+        <img src="/media/{{ callin.receipe_image }}" alt="Old Image" height="100" width="100" />
+        <input type="file" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="receipe_image" />
+      </div>
+
+      <button type="submit" class="btn btn-success">Update Receipe</button>
+    </form>
+  </div>
+{% endblock %}
