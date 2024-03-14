@@ -18,14 +18,13 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from vege.views import *
+import vege
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', receipes),
-    path('delete-receipe/<int:id>', delete_receipe, name="delete_receipe"),
-    path('updat/<int:id>', update_receipe, name="updated"),
+    path("vege/", include("vege.urls"))
 ]
 
 if settings.DEBUG:
