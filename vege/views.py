@@ -13,6 +13,12 @@ def receipes(request):
             receipe_name=receipe_name, receipe_description=receipe_description, receipe_image=receipe_image)
         return redirect("/")
     queryset = Receipe.objects.all()
+    if request.GET.get("search"):
+        queryset = Receipe.objects.filter(
+            receipe_name__icontains=request.GET.get("search"))
+        # print(f"here: -{request.GET.get('search')}-")
+    elif request.GET.get("search") == '':
+        queryset = None
     context = {"receipes": queryset}
     return render(request, "receipes.html", context=context)
 
@@ -24,15 +30,16 @@ def delete_receipe(request, id):
 
 
 def update_receipe(request, id):
+    queryset = Receipe.objects.get(id=id)
     if request.method == 'POST':
-        Receipe.objects.get(id=id)
         receipe_name = request.POST.get("receipe_name")
         receipe_description = request.POST.get("receipe_description")
         receipe_image = request.FILES.get("receipe_image")
-        Receipe(id=id, receipe_name=receipe_name,
-                receipe_description=receipe_description, receipe_image=receipe_image).save()
-        queryset = Receipe.objects.all()
-        context = {"receipes": queryset}
+        queryset.receipe_image = receipe_image
+        queryset.rdreceipe_description = receipe_description
+        if receipe_image:
+            queryset.receipe_image = receipe_image
+        queryset.save()
         return redirect('/')
     else:
         store = Receipe.objects.get(id=id)

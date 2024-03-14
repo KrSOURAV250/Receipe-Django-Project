@@ -2,7 +2,7 @@
 {% load static %}
 {% block start %}
   <div class="container mt-5">
-    <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
+    <form class="col-6 mx-auto mb-5 card p-3 shadow-lg" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <h2>Add Receipe</h2>
       <hr />
@@ -21,7 +21,19 @@
 
       <button type="submit" class="btn btn-success">Add Receipe</button>
     </form>
-    <table class="table">
+    <hr />
+    <div class="mt-5">
+      <div class="mx-auto col-6">
+        <form>
+          <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Search Food</label>
+            <input type="text" name="search" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="receipe_name" />
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div>
+    </div>
+    <table class="table mt-5">
       <thead>
         <tr>
           <th scope="col">#</th>
@@ -42,7 +54,7 @@
             </td>
             <td>
               <a href="/delete-receipe/{{ receipe.id }}" class="btn btn-danger m-3">Delete</a>
-              <a href="/updat/{{ receipe.id }}" class="btn btn-danger m-3">Update</a>
+              <a href="/updat/{{ receipe.id }}" class="btn btn-success m-3">Update</a>
             </td>
           </tr>
         {% endfor %}
