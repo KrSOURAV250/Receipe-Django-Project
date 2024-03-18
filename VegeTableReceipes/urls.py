@@ -23,6 +23,7 @@ from vege.views import *
 import vege
 
 urlpatterns = [
+    path('', receipes),
     path('admin/', admin.site.urls),
     path("vege/", include("vege.urls"))
 ]

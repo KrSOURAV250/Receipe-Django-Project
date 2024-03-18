@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.contrib import messages
 from .models import *
 import time
 
@@ -36,8 +38,8 @@ def update_receipe(request, id):
         receipe_name = request.POST.get("receipe_name")
         receipe_description = request.POST.get("receipe_description")
         receipe_image = request.FILES.get("receipe_image")
-        queryset.receipe_image = receipe_image
-        queryset.rdreceipe_description = receipe_description
+        queryset.receipe_name = receipe_name
+        queryset.receipe_description = receipe_description
         if receipe_image:
             queryset.receipe_image = receipe_image
         queryset.save()
@@ -47,13 +49,14 @@ def update_receipe(request, id):
         return render(request, "updateReceipe.html", {'callin': store})
 
 
-def login(request):
+def login_page(request):
+    if request.method == "POST":
+        user_name = request.POST.get("username")
+        password = request.POST.get("password")
+        if User.objects.filter(username=user_name).exists():
+            messages.error(request, "Username Invlid")
+            return redirect('/vege/login')
     return render(request, "login.html")
-
-
-def register_successfully():
-    HttpResponse("<h1> Login Successfully </h1>")
-    time.sleep(2)
 
 
 def register(request):
@@ -62,10 +65,14 @@ def register(request):
         last_name = request.POST.get("last_name")
         username = request.POST.get("username")
         password = request.POST.get("password")
-        User.objects.create(
+        user = User.objects.filter(username=username)
+        if user.exists():
+            messages.error(request, "This UserName Already Taken.")
+            return redirect("/vege/register")
+        a = User.objects.create(
             first_name=first_name, last_name=last_name, username=username)
-        User.set_password(raw_password=password)
-        User.save()
-        register_successfully()
-        redirect('/login')
+        a.set_password(raw_password=password)
+        a.save()
+        messages.success(request, "Regestration Successfully.")
+        return redirect('/vege/login')
     return render(request, "register.html")
