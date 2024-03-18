@@ -76,3 +76,5 @@ def register(request):
         messages.success(request, "Regestration Successfully.")
         return redirect('/vege/login')
     return render(request, "register.html")
+
+    abc
