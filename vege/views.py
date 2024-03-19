@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib import messages
@@ -53,9 +53,16 @@ def login_page(request):
     if request.method == "POST":
         user_name = request.POST.get("username")
         password = request.POST.get("password")
-        if User.objects.filter(username=user_name).exists():
+        if not User.objects.filter(username=user_name).exists():
             messages.error(request, "Username Invlid")
-            return redirect('/vege/login')
+            return redirect('/vege/register')
+        user = authenticate(username=user_name, password=password)
+        if user is None:
+            messages.error(request, "Invalid Password")
+            return redirect("/vege/login")
+        else:
+            login(request, user=user)
+            return redirect("/")
     return render(request, "login.html")
 
 
@@ -65,14 +72,15 @@ def register(request):
         last_name = request.POST.get("last_name")
         username = request.POST.get("username")
         password = request.POST.get("password")
-        user = User.objects.filter(username=username)
-        if user.exists():
+        if User.objects.filter(username=username).exists():
             messages.error(request, "This UserName Already Taken.")
             return redirect("/vege/register")
         a = User.objects.create(
             first_name=first_name, last_name=last_name, username=username)
         a.set_password(raw_password=password)
         a.save()
+        p = User.objects.filter(id=16)
+        print(p)
         messages.success(request, "Regestration Successfully.")
         return redirect('/vege/login')
     return render(request, "register.html")
