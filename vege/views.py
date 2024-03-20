@@ -49,21 +49,46 @@ def update_receipe(request, id):
         return render(request, "updateReceipe.html", {'callin': store})
 
 
+# def login_page(request):
+#     if request.method == "POST":
+#         user_name = request.POST.get("username")
+#         password = request.POST.get("password")
+#         if not User.objects.filter(username=user_name).exists():
+#             messages.error(request, "Username Invalid")
+#             return redirect('/vege/register')
+#         user = authenticate(username=user_name, password=password)
+#         if user is None:
+#             messages.error(request, "Invalid Password")
+#             return redirect("/vege/login")
+#         login(request, user=user)
+#         return redirect("/")
+#     return render(request, "login.html")
+    
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+
 def login_page(request):
-    if request.method == "POST":
-        user_name = request.POST.get("username")
-        password = request.POST.get("password")
-        if not User.objects.filter(username=user_name).exists():
-            messages.error(request, "Username Invlid")
-            return redirect('/vege/register')
-        user = authenticate(username=user_name, password=password)
-        if user is None:
-            messages.error(request, "Invalid Password")
-            return redirect("/vege/login")
-        else:
-            login(request, user=user)
-            return redirect("/")
-    return render(request, "login.html")
+   if request.method == "POST":
+       username = request.POST.get("username")
+       password = request.POST.get("password")
+
+       # Check for username validity before authentication
+       if not User.objects.filter(username=username).exists():
+           messages.error(request, "Invalid Username")
+           return redirect('/vege/login')  # Redirect back to login page
+
+       # Now proceed with authentication
+       user = authenticate(username=username, password=password)
+       if user is not None:
+           login(request, user)
+           return redirect("/")  # Redirect to desired home page
+       else:
+           messages.error(request, "Invalid Password")
+           return redirect("/vege/register")
+
+   return render(request, "login.html")
+
 
 
 def register(request):
@@ -78,9 +103,7 @@ def register(request):
         a = User.objects.create(
             first_name=first_name, last_name=last_name, username=username)
         a.set_password(raw_password=password)
-        a.save()
-        p = User.objects.filter(id=16)
-        print(p)
+        a.save()            
         messages.success(request, "Regestration Successfully.")
         return redirect('/vege/login')
     return render(request, "register.html")
