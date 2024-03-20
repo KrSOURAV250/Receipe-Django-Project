@@ -4,6 +4,6 @@ from .views import *
 urlpatterns = [
     path('delete-receipe/<int:id>', delete_receipe, name="delete_receipe"),
     path('updat/<int:id>', update_receipe, name="updated"),
-    path('login', login_page, name="login"),
+    path('loginn', login_page, name="login"),
     path('register', register, name="register")
 ]

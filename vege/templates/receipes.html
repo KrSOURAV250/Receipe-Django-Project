@@ -53,8 +53,8 @@
               <img src="/media/{{ receipe.receipe_image }}" alt="Not Uploaded" height="200" width="200" style="border-radius: 10px;" />
             </td>
             <td>
-              <a href="/vege/delete-receipe/{{ receipe.id }}" class="btn btn-danger m-3">Delete</a>
-              <a href="/vege/updat/{{ receipe.id }}" class="btn btn-success m-3">Update</a>
+              <a href="{% url 'delete_receipe' receipe.id %}" class="btn btn-danger m-3">Delete</a>
+              <a href="{% url 'updated' receipe.id %}" class="btn btn-success m-3">Update</a>
             </td>
           </tr>
         {% endfor %}
