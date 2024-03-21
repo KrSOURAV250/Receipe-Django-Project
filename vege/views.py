@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib import messages
+from django.contrib import auth
 from .models import *
 import time
 
@@ -53,32 +54,36 @@ def login_page(request):
     if request.method == "POST":
         user_name = request.POST.get("username")
         password = request.POST.get("password")
-        if not User.objects.filter(username=user_name).exists():
-            messages.error(request, "Username Invalid")
-            return redirect('/vege/register')
+        # if not User.objects.filter(username=user_name).exists():
+        #     messages.error(request, "Username Invalid")
+        #     return redirect('/vege/register')
         user = authenticate(username=user_name, password=password)
-        if user is None:
-            messages.error(request, "Invalid Password")
-            return redirect("/vege/login")
-        login(request, user=user)
-        return redirect("/")
-    print(messages)
-    return render(request, "login.html", {'messages': messages.get_messages(request)})
+        if user is not None:
+            auth.login(request, user)
+            return render(request, "login.html")
+        else:
+            messages.error(request, "Credantionals are invalid")
+    #     login(request, user=user)
+    #     return redirect("/")
+    # print(messages)
+    # return render(request, "login.html", {'messages': messages.get_messages(request)})
+    return render(request, "login.html")
 
 
 def register(request):
     if request.method == "POST":
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
+        first_name = request.POST.get("fname")
+        last_name = request.POST.get("lname")
         username = request.POST.get("username")
-        password = request.POST.get("password")
+        password = request.POST.get("user_password")
         if User.objects.filter(username=username).exists():
             messages.error(request, "This UserName Already Taken.")
-            return redirect("/vege/register")
-        a = User.objects.create(
-            first_name=first_name, last_name=last_name, username=username)
-        a.set_password(raw_password=password)
-        a.save()
-        messages.success(request, "Regestration Successfully.")
-        return redirect('/vege/login')
+            return redirect("register")
+        else:
+            a = User.objects.create(
+                first_name=first_name, last_name=last_name, username=username)
+            a.set_password(raw_password=password)
+            a.save()
+            messages.success(request, "Regestration Successfully.")
+            return redirect('login')
     return render(request, "register.html")
