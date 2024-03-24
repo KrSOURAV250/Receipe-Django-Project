@@ -2,9 +2,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from django.contrib import messages
+from django.db.models import Q
 from .models import *
-import time
 
 
 # Create your views here.
@@ -93,3 +94,15 @@ def register(request):
             messages.success(request, "Regestration Successfully.")
             return redirect('login')
     return render(request, "register.html")
+
+
+def get_students(request):
+    queryset = Student.objects.all()
+    search = request.GET.get("search")
+    if search:
+        queryset = queryset.filter(Q(student_name__icontains=search) | Q(student_id__student_id__icontains=search) | Q(
+            student_email__icontains=search) | Q(student_age__icontains=search) | Q(student_address__icontains=search) | Q(department__department__icontains=search))
+    paginator = Paginator(queryset, 7)
+    page_no = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_no)
+    return render(request, template_name="report/students.html", context={"queryset": page_obj})

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background-color: black;
+        color: white;
+      }
+    </style>
+  </head>
+  <body data-bs-theme="dark">
+    <nav class="navbar p-3 dark shadow-lg dark:bg-slate-800 dark:text-white dark:text-slate-400">
+      <div class="flex justify-between">
+        <a class="text-2xl px-4 m-4" href="/vege/students">The Recipes</a>
+        <a class="text-white bg-slate-700 border-0 px-4 py-2 m-2 focus:outline-none hover:bg-indigo-600 rounded text-lg" href="{% url 'logout_page' %}">
+          {% if request.user.is_authenticated %}
+            Log Out
+          {% else %}
+            Log In
+          {% endif %}
+        </a>
+      </div>
+    </nav>
+    {% block start %}
+
+    {% endblock %}
+  </body>
+</html>
