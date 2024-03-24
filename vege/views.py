@@ -1,14 +1,14 @@
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.contrib import messages
-from django.contrib import auth
 from .models import *
 import time
 
 
 # Create your views here.
+@login_required(login_url="/vege/loginn")
 def receipes(request):
     if request.method == "POST":
         receipe_name = request.POST.get("receipe_name")
@@ -33,6 +33,7 @@ def delete_receipe(request, id):
     return redirect('/')
 
 
+@login_required(login_url="/vege/loginn")
 def update_receipe(request, id):
     queryset = Receipe.objects.get(id=id)
     if request.method == 'POST':
@@ -54,20 +55,25 @@ def login_page(request):
     if request.method == "POST":
         user_name = request.POST.get("username")
         password = request.POST.get("password")
-        # if not User.objects.filter(username=user_name).exists():
-        #     messages.error(request, "Username Invalid")
-        #     return redirect('/vege/register')
+        if not User.objects.filter(username=user_name).exists():
+            messages.error(request, message="Invalid Username.")
+            return redirect(to="/vege/loginn")
         user = authenticate(username=user_name, password=password)
-        if user is not None:
-            auth.login(request, user)
-            return render(request, "login.html")
-        else:
-            messages.error(request, "Credantionals are invalid")
-    #     login(request, user=user)
-    #     return redirect("/")
-    # print(messages)
-    # return render(request, "login.html", {'messages': messages.get_messages(request)})
+        if user:
+            login(request, user=user)
+            messages.success(request, message="Login Successfully.")
+            return redirect(to='/')
+        messages.error(request, message="Invalid Password.")
+        return redirect(to="/vege/loginn")
     return render(request, "login.html")
+
+
+@login_required(login_url="/vege/loginn")
+def logout_page(request):
+    print(request)
+    logout(request)
+    messages.info(request, message="Logged Out.")
+    return redirect("/vege/loginn")
 
 
 def register(request):

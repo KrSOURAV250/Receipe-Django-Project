@@ -2,6 +2,14 @@
 {% load static %}
 {% block start %}
   <div class="container mt-5">
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+          <div class="alert mt-3 alert-success" role="alert">{{ message }}</div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    <h1>{{ request.user }}</h1>
     <form class="col-6 mx-auto mb-5 card p-3 shadow-lg" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <h2>Add Receipe</h2>
