@@ -33,6 +33,12 @@ def receipes(request):
 def delete_receipe(request, id):
     queryset = Receipe.objects.get(id=id)
     queryset.delete()
+    sub = "Recipe Deleted"
+    message_text = f"""Hey {request.user.first_name}, Your Recipe Have Been Deleted Successfully."""
+    sender = "theappishere@gmail.com"
+    reciver = [request.user.email]
+    send_mail(subject=sub, message=message_text,
+              from_email=sender, recipient_list=reciver, fail_silently=False)
     return redirect('/')
 
 
@@ -48,6 +54,12 @@ def update_receipe(request, id):
         if receipe_image:
             queryset.receipe_image = receipe_image
         queryset.save()
+        sub = "Recipe Updated"
+        message_text = f"""Hey {request.user.first_name}, Your Recipe Have Been Updated Successfully."""
+        sender = "theappishere@gmail.com"
+        reciver = [request.user.email]
+        send_mail(subject=sub, message=message_text,
+                  from_email=sender, recipient_list=reciver, fail_silently=False)
         return redirect('/')
     else:
         store = Receipe.objects.get(id=id)
@@ -104,7 +116,7 @@ def register(request):
             return redirect("register")
         else:
             a = User.objects.create(
-                first_name=first_name, last_name=last_name, username=username)
+                first_name=first_name, last_name=last_name, username=username, email=email)
             a.set_password(raw_password=password)
             a.save()
             messages.success(request, "Regestration Successfully.")
