@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
 from django.contrib import messages
 from django.db.models import Q
 from .models import *
@@ -20,14 +21,15 @@ def receipes(request):
         return redirect("/")
     queryset = Receipe.objects.all()
     if request.GET.get("search"):
-        queryset = Receipe.objects.filter(
-            receipe_name__icontains=request.GET.get("search"))
+        queryset = Receipe.objects.filter(Q(receipe_name__icontains=request.GET.get(
+            "search")) | Q(receipe_description__icontains=request.GET.get("search")))
     elif request.GET.get("search") == '':
         queryset = None
     context = {"receipes": queryset}
     return render(request, "receipes.html", context=context)
 
 
+@login_required(login_url="/vege/loginn")
 def delete_receipe(request, id):
     queryset = Receipe.objects.get(id=id)
     queryset.delete()
@@ -63,6 +65,12 @@ def login_page(request):
         if user:
             login(request, user=user)
             messages.success(request, message="Login Successfully.")
+            sub = "Logged In"
+            message_text = f"""Hey {request.user.first_name}, You Have Been Logged In Successfully."""
+            sender = "theappishere@gmail.com"
+            reciver = [request.user.email]
+            send_mail(subject=sub, message=message_text,
+                      from_email=sender, recipient_list=reciver, fail_silently=False)
             return redirect(to='/')
         messages.error(request, message="Invalid Password.")
         return redirect(to="/vege/loginn")
@@ -71,9 +79,16 @@ def login_page(request):
 
 @login_required(login_url="/vege/loginn")
 def logout_page(request):
-    print(request)
+    first_name = request.user.first_name
+    email = request.user.email
     logout(request)
     messages.info(request, message="Logged Out.")
+    sub = "Logged Out"
+    message_text = f"""Hey {first_name}, You Have Been Logged Out Successfully."""
+    sender = "theappishere@gmail.com"
+    reciver = [email]
+    send_mail(subject=sub, message=message_text,
+              from_email=sender, recipient_list=reciver, fail_silently=False)
     return redirect("/vege/loginn")
 
 
@@ -82,6 +97,7 @@ def register(request):
         first_name = request.POST.get("fname")
         last_name = request.POST.get("lname")
         username = request.POST.get("username")
+        email = request.POST.get("user_email")
         password = request.POST.get("user_password")
         if User.objects.filter(username=username).exists():
             messages.error(request, "This UserName Already Taken.")
@@ -92,10 +108,17 @@ def register(request):
             a.set_password(raw_password=password)
             a.save()
             messages.success(request, "Regestration Successfully.")
+            sub = "Welcome To This APP"
+            message_text = f"""Hey {first_name}, You Have Registered Successfully."""
+            sender = "theappishere@gmail.com"
+            reciver = [email]
+            send_mail(subject=sub, message=message_text,
+                      from_email=sender, recipient_list=reciver, fail_silently=False)
             return redirect('login')
     return render(request, "register.html")
 
 
+@login_required(login_url="/vege/loginn")
 def get_students(request):
     queryset = Student.objects.all()
     search = request.GET.get("search")
