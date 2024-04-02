@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Sum
 from .models import *
 
 
@@ -141,3 +141,10 @@ def get_students(request):
     page_no = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_no)
     return render(request, template_name="report/students.html", context={"queryset": page_obj})
+
+
+def see_marks(request, student_id):
+    queryset = SubjectMarks.objects.filter(
+        student__student_id__student_id=student_id)
+    total_marks = queryset.aaggregate(total_marks=Sum("marks"))
+    return render(request, template_name="seeMarks.html", context={"qs": queryset, "total_marks": total_marks})

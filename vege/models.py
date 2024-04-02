@@ -68,3 +68,8 @@ class SubjectMarks(models.Model):
 
     class Meta:
         unique_together = ["student", "subject"]
+
+
+class AskMe(models.Model):
+    usr_msg = models.TextField()
+    otpt = models.TextField()

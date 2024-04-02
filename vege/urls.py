@@ -7,5 +7,6 @@ urlpatterns = [
     path('loginn', login_page, name="login"),
     path('register', register, name="register"),
     path('logout', logout_page, name="logout_page"),
-    path(route="students", view=get_students, name="get_students")
+    path(route="students", view=get_students, name="get_students"),
+    path(route="seemarks/<student_id>", view=see_marks, name="seeMarks"),
 ]

@@ -1,0 +1,31 @@
+{% extends 'base2.html' %}
+{% block start %}
+  <div class="mx-40 my-5">
+    <h1 class="text-4xl">Total Marks : {{ total_marks.total_marks }}</h1>
+    <h1 class="text-4xl">Rank : </h1>
+  </div>
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg mx-[10vw] border-2 dark:bg-slate-800 dark:text-white dark:text-slate-400">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+      <thead class="text-xs border-b-2 text-gray-700 uppercase dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">#</th>
+          <th scope="col" class="px-6 py-3">
+            <b>Subject</b>
+          </th>
+          <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">Marks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in qs %}
+          <tr class="border-b border-gray-200 dark:border-gray-700">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">{{ forloop.counter }}</th>
+            <td class="px-6 py-4">
+              <b>{{ m.subject }}</b>
+            </td>
+            <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800">{{ m.marks }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
